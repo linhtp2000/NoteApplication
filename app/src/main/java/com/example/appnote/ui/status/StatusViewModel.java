@@ -1,7 +1,11 @@
 package com.example.appnote.ui.status;
+import android.widget.ListView;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.example.appnote.R;
 
 public class StatusViewModel extends ViewModel {
 

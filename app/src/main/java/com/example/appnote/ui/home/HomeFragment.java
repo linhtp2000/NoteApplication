@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.appnote.R;
+import com.example.appnote.ui.status.StatusFragment;
 
 public class HomeFragment extends Fragment {
 
@@ -28,6 +31,15 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
+            }
+        });
+
+
+        Button add = (Button) root.findViewById(R.id.btnAdd);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                NavigationUI.setupWithNavController();
             }
         });
         return root;
