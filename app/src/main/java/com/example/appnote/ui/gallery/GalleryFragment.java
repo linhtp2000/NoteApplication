@@ -1,6 +1,7 @@
 package com.example.appnote.ui.gallery;
 
 import android.app.Dialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -21,7 +22,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.appnote.CateListViewAdapter;
 import com.example.appnote.Category;
+import com.example.appnote.Database;
+import com.example.appnote.MainActivity;
 import com.example.appnote.R;
 import com.example.appnote.Status;
 import com.example.appnote.ui.status.StatusFragment;
@@ -36,6 +40,8 @@ public class GalleryFragment extends Fragment {
     ArrayList<Category> listCategory;
     CateListViewAdapter cateListViewAdapter;
     int stt;
+    int xoa =0;
+    Database database;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel =
@@ -44,12 +50,16 @@ public class GalleryFragment extends Fragment {
         final TextView textView = root.findViewById(R.id.text_gallery);
         final ListView listCate = root.findViewById(R.id.listcCate);
         listCategory=new ArrayList<>();
-        listCategory.add(new Category(1,"Word","17/04/2021 2:24:00 AM"));
-        listCategory.add(new Category(2,"Study","17/04/2021 2:24:00 AM"));
-        listCategory.add(new Category(3,"Relax","17/04/2021 2:24:00 AM"));
 //        listStatus.add(new Status(3,"cc","17/04/2021 2:24:00 AM"));
         cateListViewAdapter= new CateListViewAdapter((listCategory));
         listCate.setAdapter(cateListViewAdapter);
+        //Select Data
+        MainActivity activity = (MainActivity) getActivity();
+        database= activity.getMyData();
+        getDataCategory();
+
+
+
         Button add = root.findViewById(R.id.btnAdd);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,40 +84,17 @@ public class GalleryFragment extends Fragment {
         setHasOptionsMenu(true);
         return root;
     }
-    public static class CateListViewAdapter extends BaseAdapter {
-        final ArrayList<Category> listCategory;
-        public CateListViewAdapter(ArrayList<Category> listCate) {
-            this.listCategory = listCate;
-        }
-
-        @Override
-        public int getCount() {
-            return listCategory.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return listCategory.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return listCategory.get(position).id;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View viewCate;
-            if(convertView == null){
-                viewCate = View.inflate(parent.getContext(), R.layout.status_view,null);
-            }else viewCate=convertView;
-            //bind dữ liệu
-            Category category =(Category) getItem(position);
-            ((TextView) viewCate.findViewById(R.id.statusname)).setText(String.format("Name: %s",category.name));
-            ((TextView) viewCate.findViewById(R.id.statuscreate)).setText(String.format("Created: %s",category.Createdday));
-//            ((TextView) viewStatus.findViewById(R.id.tv_email)).setText(String.format("Mail: %s",user.email));
-
-            return viewCate;
+    private void getDataCategory(){
+        Cursor dataStatus=database.GetData("SELECT * FROM Category");
+        listCategory.clear();
+        while (dataStatus.moveToNext()){
+            String name = dataStatus.getString(1);
+            String created = dataStatus.getString(2);
+            int id=dataStatus.getInt(0);
+            listCategory.add(new Category(id,name,created));
+            cateListViewAdapter.notifyDataSetChanged();
+//            database =dataStatus.getString(1);
+//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
         }
     }
     public void Showdialog(){
@@ -117,6 +104,8 @@ public class GalleryFragment extends Fragment {
         Button close = (Button) dialog.findViewById(R.id.btnCancel);
         Button addStatus =(Button) dialog.findViewById(R.id.btnAddStatus);
         EditText status = (EditText) dialog.findViewById(R.id.editName);
+        TextView title = (TextView) dialog.findViewById(R.id.textView2);
+        title.setText("Category Form");
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,9 +123,35 @@ public class GalleryFragment extends Fragment {
 //                int msgiay=calendar.get(Calendar.AM_PM);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 String date=(simpleDateFormat.format(calendar.getTime()));
-                listCategory.add(new Category(listCategory.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
+                String StatusName=status.getText().toString();
+                if (StatusName.equals("")){
+                    status.setHint("Tên không được để trống");
+                }
+                else {
+                    if(xoa!=0){
+                        database.QueryData("INSERT INTO Category VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                        getDataCategory();
+                        xoa=0;
+                    }else if(xoa==0){
+                        database.QueryData("INSERT INTO Category VALUES("+ (listCategory.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                        getDataCategory();
+                    }
+//                    database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
+//                    getDataStatus();
+                    dialog.cancel();
+//                    statusListViewAdapter.notifyDataSetChanged();
+                }
+
+
+
+
+
+//                listCategory.add(new Category(listCategory.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
                 dialog.cancel();
-                cateListViewAdapter.notifyDataSetChanged();
+//                cateListViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -163,9 +178,11 @@ public class GalleryFragment extends Fragment {
             public void onClick(View v) {
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
-                listCategory.set(index, new Category(index,status.getText().toString(),listCategory.get(index).Createdday));
+//                listCategory.set(index, new Category(index,status.getText().toString(),listCategory.get(index).Createdday));
+                database.QueryData("UPDATE Category SET CateName = '"+ status.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
+                getDataCategory();
                 dialog.cancel();
-                cateListViewAdapter.notifyDataSetChanged();
+//                cateListViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -190,9 +207,12 @@ public class GalleryFragment extends Fragment {
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
 //                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-                listCategory.remove(index);
+//                listCategory.remove(index);
+                xoa=index+1;
+                database.QueryData("DELETE FROM Category WHERE Id = '"+ (index + 1) +"' ");
+                getDataCategory();
                 dialog.cancel();
-                cateListViewAdapter.notifyDataSetChanged();
+//                cateListViewAdapter.notifyDataSetChanged();
             }
         });
     }

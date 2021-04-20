@@ -1,11 +1,9 @@
 package com.example.appnote;
-
+//package com.dmt.damiti.sqlitedatabasekpt;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -19,21 +17,43 @@ import androidx.appcompat.widget.Toolbar;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-
+    public Database database;
+    String StatusName;
+    Cursor dataStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        //Tạo DB
+        database=new Database(this,"note.sqlite",null,1);
+        //Tạo bảng Status
+        database.QueryData("CREATE TABLE IF NOT EXISTS Status(Id INTEGER PRIMARY KEY ,StatusName NVARCHAR,Created NVARCHAR)");
+        database.QueryData("CREATE TABLE IF NOT EXISTS Priority(Id INTEGER PRIMARY KEY ,PrioName NVARCHAR,Created NVARCHAR)");
+        database.QueryData("CREATE TABLE IF NOT EXISTS Category(Id INTEGER PRIMARY KEY ,CateName NVARCHAR,Created NVARCHAR)");
+        database.QueryData("CREATE TABLE IF NOT EXISTS Notes(Id INTEGER PRIMARY KEY ,NoteName NVARCHAR,CateName NVARCHAR,PrioName NVARCHAR,StatusName NVARCHAR,Planday NVARCHAR,Created NVARCHAR)");
+
+
+
+        //INSERT DATA
+//        dataStatus=database.GetData("SELECT * FROM Status");
+//        while (dataStatus.moveToNext()){
+//            StatusName =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//        database.QueryData("INSERT INTO Status VALUES(null,'Done','17/04/2021 2:24:00')");
+//        database.QueryData("INSERT INTO Status VALUES(null,'Comming','17/04/2021 2:24:00')");
+//        database.QueryData("INSERT INTO Status VALUES(null,'Pending','17/04/2021 2:24:00')");
+//        database.QueryData("INSERT INTO Notes VALUES(null,'Đá banh','da','co','Comming','12/3/2000','19/2/2000  15:15:15')");
+
+
+
+
+
+
+
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -46,7 +66,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-
+    public Database getMyData() {
+        return (Database) database;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

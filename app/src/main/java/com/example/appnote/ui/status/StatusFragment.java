@@ -1,6 +1,7 @@
 package com.example.appnote.ui.status;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -21,8 +22,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.appnote.Database;
+import com.example.appnote.MainActivity;
 import com.example.appnote.R;
 import com.example.appnote.Status;
+import com.example.appnote.StatusListViewAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,7 +39,10 @@ public class StatusFragment extends Fragment {
     ArrayList<Status> listStatus;
     StatusListViewAdapter statusListViewAdapter;
     int stt;
+    int xoa=0;
     String date;
+    Database database;
+//    Database database;
     boolean fix;
 //    boolean fix=true;
 
@@ -46,22 +53,14 @@ public class StatusFragment extends Fragment {
         final ListView listViewStatus = root.findViewById(R.id.listviewStatus);
         StatusViewModel = new ViewModelProvider(this).get(StatusViewModel.class);
         add = root.findViewById(R.id.btnAdd);
-
-
-
-
-
-
         listStatus=new ArrayList<>();
-        listStatus.add(new Status(1,"Done","17/04/2021 2:24:00 AM"));
-        listStatus.add(new Status(2,"Coming","17/04/2021 2:24:00 AM"));
-        listStatus.add(new Status(3,"Pending","17/04/2021 2:24:00 AM"));
-//        listStatus.add(new Status(3,"cc","17/04/2021 2:24:00 AM"));
         statusListViewAdapter= new StatusListViewAdapter((listStatus));
         listViewStatus.setAdapter(statusListViewAdapter);
-//
-//        statusListViewAdapter = new StatusListViewAdapter(listStatus);
-//        listViewStatus.setAdapter(statusListViewAdapter);
+        //select data
+        MainActivity activity = (MainActivity) getActivity();
+        database= activity.getMyData();
+//         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
+        getDataStatus();
 
 
         add.setOnClickListener(new View.OnClickListener() {
@@ -77,6 +76,7 @@ public class StatusFragment extends Fragment {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
                 stt=position;
+//                Toast.makeText(getActivity(),position,Toast.LENGTH_LONG).show();
                 return false;
             }
         });
@@ -85,6 +85,19 @@ public class StatusFragment extends Fragment {
         registerForContextMenu(listViewStatus);
         setHasOptionsMenu(true);
         return root;
+    }
+    private void getDataStatus(){
+        Cursor dataStatus=database.GetData("SELECT * FROM Status");
+        listStatus.clear();
+        while (dataStatus.moveToNext()){
+            String name = dataStatus.getString(1);
+            String created = dataStatus.getString(2);
+            int id=dataStatus.getInt(0);
+            listStatus.add(new Status(id,name,created));
+            statusListViewAdapter.notifyDataSetChanged();
+//            database =dataStatus.getString(1);
+//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void Showdialog(){
@@ -110,11 +123,28 @@ public class StatusFragment extends Fragment {
 //                int msgiay=calendar.get(Calendar.AM_PM);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 date=(simpleDateFormat.format(calendar.getTime()));
+                String StatusName=status.getText().toString();
+                if (StatusName.equals("")){
+                    status.setHint("Tên không được để trống");
+                }
+                else {
+                    if(xoa!=0){
+                        database.QueryData("INSERT INTO Status VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                        getDataStatus();
+                        xoa=0;
+                    }else if(xoa==0){
+                        database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                        getDataStatus();
+                    }
+//                    database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
+//                    getDataStatus();
+                    dialog.cancel();
+//                    statusListViewAdapter.notifyDataSetChanged();
+                }
 
-
-                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
-                dialog.cancel();
-                statusListViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -141,9 +171,12 @@ public class StatusFragment extends Fragment {
             public void onClick(View v) {
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
-                listStatus.set(index, new Status(index,status.getText().toString(),listStatus.get(index).Created));
+//                Toast.makeText(getActivity(),index,Toast.LENGTH_LONG);
+                database.QueryData("UPDATE Status SET StatusName = '"+ status.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
+                getDataStatus();
+//                listStatus.set(index, new Status(index,status.getText().toString(),listStatus.get(index).Created));
                 dialog.cancel();
-                statusListViewAdapter.notifyDataSetChanged();
+//                statusListViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -165,89 +198,15 @@ public class StatusFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-                //Cập nhật listview
-//                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-                listStatus.remove(index);
+                xoa=index+1;
+                database.QueryData("DELETE FROM Status WHERE Id = '"+ (index + 1) +"' ");
+//                listStatus.remove(index);
+                getDataStatus();
                 dialog.cancel();
-                statusListViewAdapter.notifyDataSetChanged();
+//                statusListViewAdapter.notifyDataSetChanged();
             }
         });
     }
-    //Tạo adapter
-//    public class StatusListViewAdapter extends BaseAdapter {
-//        final ArrayList<Status> listStatus;
-//        StatusListViewAdapter(ArrayList<Status> listStatus){
-//            this.listStatus=listStatus;
-//        }
-//        @Override
-//        public int getCount() {
-//            return listStatus.size();
-//        }
-//
-////        @Override
-////        public Object getItem(int position) {
-////            return listStatus.get(position);
-////        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return listStatus.get(position).id;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            View viewStatus;
-//            if(convertView == null){
-//                viewStatus = View.inflate(parent.getContext(), R.layout.status_view,null);
-//            }else viewStatus=convertView;
-//            //bind dữ liệu
-//            Status status =(Status) getItem(position);
-//            ((TextView) viewStatus.findViewById(R.id.statusname)).setText(String.format("Name: %s",status.name));
-//            ((TextView) viewStatus.findViewById(R.id.statuscreate)).setText(String.format("Created Day: %s",status.Created));
-//            return viewStatus;
-//        }
-//    }
-
-    public static class StatusListViewAdapter extends BaseAdapter {
-        final ArrayList<Status> listStatus;
-        public StatusListViewAdapter(ArrayList<Status> listStatus) {
-            this.listStatus = listStatus;
-        }
-
-        @Override
-        public int getCount() {
-            return listStatus.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return listStatus.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return listStatus.get(position).id;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View viewStatus;
-            if(convertView == null){
-                viewStatus = View.inflate(parent.getContext(), R.layout.status_view,null);
-            }else viewStatus=convertView;
-            //bind dữ liệu
-            Status status =(Status) getItem(position);
-            ((TextView) viewStatus.findViewById(R.id.statusname)).setText(String.format("Name: %s",status.name));
-            ((TextView) viewStatus.findViewById(R.id.statuscreate)).setText(String.format("Created: %s",status.Created));
-//            ((TextView) viewStatus.findViewById(R.id.tv_email)).setText(String.format("Mail: %s",user.email));
-
-            return viewStatus;
-        }
-    }
-
-
-
 
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
