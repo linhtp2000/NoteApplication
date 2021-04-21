@@ -22,7 +22,7 @@
     <ListView
         android:id="@+id/listcCate"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="-8dp"
         tools:layout_editor_absoluteY="158dp"
         tools:ignore="MissingConstraints" />

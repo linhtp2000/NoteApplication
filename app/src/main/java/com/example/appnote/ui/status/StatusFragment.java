@@ -41,6 +41,7 @@ public class StatusFragment extends Fragment {
     int stt;
     int xoa=0;
     String date;
+    int phantutable=0;
     Database database;
 //    Database database;
     boolean fix;
@@ -94,6 +95,7 @@ public class StatusFragment extends Fragment {
             String created = dataStatus.getString(2);
             int id=dataStatus.getInt(0);
             listStatus.add(new Status(id,name,created));
+            phantutable=phantutable+1;
             statusListViewAdapter.notifyDataSetChanged();
 //            database =dataStatus.getString(1);
 //            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
@@ -128,19 +130,10 @@ public class StatusFragment extends Fragment {
                     status.setHint("Tên không được để trống");
                 }
                 else {
-                    if(xoa!=0){
-                        database.QueryData("INSERT INTO Status VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataStatus();
-                        xoa=0;
-                    }else if(xoa==0){
-                        database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataStatus();
-                    }
-//                    database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+
+                    database.QueryData("INSERT INTO Status VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
 ////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
-//                    getDataStatus();
+                    getDataStatus();
                     dialog.cancel();
 //                    statusListViewAdapter.notifyDataSetChanged();
                 }
@@ -172,10 +165,12 @@ public class StatusFragment extends Fragment {
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
 //                Toast.makeText(getActivity(),index,Toast.LENGTH_LONG);
-                database.QueryData("UPDATE Status SET StatusName = '"+ status.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
+                database.QueryData("UPDATE Status SET StatusName = '"+ status.getText().toString() +"' WHERE StatusName = '"+ listStatus.get(index).name +"' AND Created='"+ listStatus.get(index).Created+"' ");
                 getDataStatus();
 //                listStatus.set(index, new Status(index,status.getText().toString(),listStatus.get(index).Created));
                 dialog.cancel();
+                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+
 //                statusListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -199,10 +194,12 @@ public class StatusFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 xoa=index+1;
-                database.QueryData("DELETE FROM Status WHERE Id = '"+ (index + 1) +"' ");
+                database.QueryData("DELETE FROM Status WHERE StatusName = '"+ listStatus.get(index).name +"' AND Created='"+ listStatus.get(index).Created +"' ");
 //                listStatus.remove(index);
                 getDataStatus();
                 dialog.cancel();
+                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+
 //                statusListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -219,11 +216,11 @@ public class StatusFragment extends Fragment {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if(item.getTitle()=="Sửa"){
-            Toast.makeText(getContext(),"Sửa",Toast.LENGTH_SHORT).show();
+
 //            fix=true;
             Fixdialog(listStatus.get(stt),stt);
         }else if(item.getTitle()=="Xóa"){
-            Toast.makeText(getContext(),"Xóa",Toast.LENGTH_SHORT).show();
+
             Deldialog(listStatus.get(stt),stt);
         }
         return super.onContextItemSelected(item);

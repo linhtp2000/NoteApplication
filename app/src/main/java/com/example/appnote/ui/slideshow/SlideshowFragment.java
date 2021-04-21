@@ -41,6 +41,7 @@ public class SlideshowFragment extends Fragment {
     ArrayList<Priority> listPriority;
     PrioListViewAdapter prioListViewAdapter;
     int stt;
+    int phantutable=0;
     Database database;
     int xoa=0;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -96,6 +97,7 @@ public class SlideshowFragment extends Fragment {
             String created = dataPriority.getString(2);
             int id=dataPriority.getInt(0);
             listPriority.add(new Priority(id,name,created));
+            phantutable=phantutable+1;
             prioListViewAdapter.notifyDataSetChanged();
 //            database =dataStatus.getString(1);
 //            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
@@ -127,25 +129,25 @@ public class SlideshowFragment extends Fragment {
 //                int msgiay=calendar.get(Calendar.AM_PM);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 String date=(simpleDateFormat.format(calendar.getTime()));
-                if(xoa!=0){
-                    database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                String StatusName=status.getText().toString();
+//                if(xoa!=0){
+//                    database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                    getDataPriority();
+//                    xoa=0;
+//                }else if(xoa==0){
+//                    database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                    getDataPriority();
+//                }
+                if (StatusName.equals("")){
+                    status.setHint("Tên không được để trống");
+                }
+                else {
+                    database.QueryData("INSERT INTO Priority VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
                     getDataPriority();
-                    xoa=0;
-                }else if(xoa==0){
-                    database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                    getDataPriority();
+                    dialog.cancel();
                 }
 
 
-
-//                if(xoa==0){
-//                    database.QueryData("INSERT INTO Priority VALUES("+ listPriority.size() +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                    getDataPriority();
-//                }else{
-//                    database.QueryData("INSERT INTO Priority VALUES("+ listPriority.size() +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                    getDataPriority();
-//                }
-//                listPriority.add(new Priority(listPriority.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
                 dialog.cancel();
 //                prioListViewAdapter.notifyDataSetChanged();
             }
@@ -175,9 +177,10 @@ public class SlideshowFragment extends Fragment {
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
 //                listPriority.set(index, new Priority(index,status.getText().toString(),listPriority.get(index).Createdday));
-                database.QueryData("UPDATE Priority SET PrioName = '"+ status.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
+                database.QueryData("UPDATE Priority SET PrioName = '"+ status.getText().toString() +"' WHERE PrioName = '"+ listPriority.get(index).name +"' AND Created='"+ listPriority.get(index).Createdday+"' ");
                 getDataPriority();
                 dialog.cancel();
+                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
 //                prioListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -205,11 +208,12 @@ public class SlideshowFragment extends Fragment {
                 //Cập nhật listview
 //                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
 //                listPriority.remove(index);
-                database.QueryData("DELETE FROM Priority WHERE Id = '"+ (index+1) +"' ");
+                database.QueryData("DELETE FROM Priority WHERE PrioName = '"+ listPriority.get(index).name +"' AND Created='"+listPriority.get(index).Createdday+"' ");
 //                listStatus.remove(index);
                 getDataPriority();
 
                 dialog.cancel();
+                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
 //                prioListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -225,11 +229,11 @@ public class SlideshowFragment extends Fragment {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if(item.getTitle()=="Sửa"){
-            Toast.makeText(getContext(),"Sửa",Toast.LENGTH_SHORT).show();
+
 //            fix=true;
             Fixdialog(listPriority.get(stt),stt);
         }else if(item.getTitle()=="Xóa"){
-            Toast.makeText(getContext(),"Xóa",Toast.LENGTH_SHORT).show();
+
             Deldialog(listPriority.get(stt),stt);
         }
         return super.onContextItemSelected(item);

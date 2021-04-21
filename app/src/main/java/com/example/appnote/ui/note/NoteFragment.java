@@ -57,6 +57,7 @@ public class NoteFragment extends Fragment {
     int cate;
     int prio;
     int stat;
+    int phantutable=0;
     int xoa =0;
     NoteListViewAdapter noteListViewAdapter;
     CateListViewAdapter cateListViewAdapter;
@@ -215,16 +216,24 @@ public class NoteFragment extends Fragment {
                     namePlan.setHint("Tên không được để trống");
                 }
                 else {
-                    if(xoa!=0){
-                        database.QueryData("INSERT INTO Notes VALUES("+ (xoa) + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataNote();
-                        xoa=0;
-                    }else if(xoa==0){
-                        database.QueryData("INSERT INTO Notes VALUES("+listNotee.size()+1 + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataNote();
-                    }
+                    database.QueryData("INSERT INTO Notes VALUES("+ (phantutable+1) + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
+                    getDataNote();
+//                    if(xoa!=0){
+//                        database.QueryData("INSERT INTO Notes VALUES("+ (xoa) + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
+////                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        getDataNote();
+//                        xoa=0;
+//                    }else if(xoa==0){
+//                        database.QueryData("INSERT INTO Notes VALUES("+listNotee.size()+1 + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
+////                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+//                        getDataNote();
+//                    }
+
+//                    database.QueryData("INSERT INTO Category VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+
+
+
+
 //                    database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
 ////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
 //                    getDataStatus();
@@ -335,18 +344,18 @@ public class NoteFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.QueryData("UPDATE Notes SET NoteName = '"+ note.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
-                database.QueryData("UPDATE Notes SET CateName = '"+ listCategory.get(cate).name +"' WHERE Id = '"+ (index+1) +"' ");
-                database.QueryData("UPDATE Notes SET PrioName = '"+ listPriority.get(prio).name +"' WHERE Id = '"+ (index+1) +"' ");
-                database.QueryData("UPDATE Notes SET StatusName = '"+ listStatus.get(stat).name +"' WHERE Id = '"+ (index+1) +"' ");
-                database.QueryData("UPDATE Notes SET Planday = '"+ date.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
-
-
+                database.QueryData("UPDATE Notes SET NoteName = '"+ note.getText().toString() +"' WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created ='"+ listNotee.get(index).Createdday+"' ");
+                database.QueryData("UPDATE Notes SET CateName = '"+ listCategory.get(cate).name +"' WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created='"+listNotee.get(index).Createdday +"'");
+                database.QueryData("UPDATE Notes SET PrioName = '"+ listPriority.get(prio).name +"' WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday +"'");
+                database.QueryData("UPDATE Notes SET StatusName = '"+ listStatus.get(stat).name +"' WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"'");
+                database.QueryData("UPDATE Notes SET Planday = '"+ date.getText().toString() +"' WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"'");
                 getDataNote();
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
 //                listNotee.set(index, new Note(listNotee.size() + 1,note.getText().toString(),listCategory.get(cate).name,listPriority.get(prio).name,listStatus.get(stat).name,date.getText().toString(),listNotee.get(index).Createdday));
                 dialog.cancel();
+                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+
 //                noteListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -374,9 +383,11 @@ public class NoteFragment extends Fragment {
 //                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
 //                listNotee.remove(index);
                 xoa=index+1;
-                database.QueryData("DELETE FROM Notes WHERE Id = '"+ (index + 1) +"' ");
+                database.QueryData("DELETE FROM Notes WHERE NoteName = '"+ listNotee.get(index).name +"' AND Created='"+ listNotee.get(index).Createdday +"' ");
                 getDataNote();
                 dialog.cancel();
+                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+
 //                noteListViewAdapter.notifyDataSetChanged();
             }
         });
@@ -432,6 +443,7 @@ public class NoteFragment extends Fragment {
             String plandate = dataNote.getString(5);
             String create = dataNote.getString(6);
             listNotee.add(new Note(id,name,category,priority,status,plandate,create));
+            phantutable=phantutable+1;
             noteListViewAdapter.notifyDataSetChanged();
 //            database =dataStatus.getString(1);
 //            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
@@ -448,11 +460,9 @@ public class NoteFragment extends Fragment {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if(item.getTitle()=="Sửa"){
-            Toast.makeText(getContext(),"Sửa",Toast.LENGTH_SHORT).show();
 //            fix=true;
             Fixdialog(listNotee.get(stt),stt);
         }else if(item.getTitle()=="Xóa"){
-            Toast.makeText(getContext(),"Xóa",Toast.LENGTH_SHORT).show();
             Deldialog(listNotee.get(stt),stt);
         }
         return super.onContextItemSelected(item);

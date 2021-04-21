@@ -40,7 +40,7 @@ public class GalleryFragment extends Fragment {
     ArrayList<Category> listCategory;
     CateListViewAdapter cateListViewAdapter;
     int stt;
-    int xoa =0;
+    int phantutable=0;
     Database database;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -71,6 +71,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 stt=position;
+//                Toast.makeText(getActivity(),listCategory.get(position).name,Toast.LENGTH_LONG).show();
                 return false;
             }
         });
@@ -92,6 +93,7 @@ public class GalleryFragment extends Fragment {
             String created = dataStatus.getString(2);
             int id=dataStatus.getInt(0);
             listCategory.add(new Category(id,name,created));
+            phantutable=phantutable+1;
             cateListViewAdapter.notifyDataSetChanged();
 //            database =dataStatus.getString(1);
 //            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
@@ -128,30 +130,11 @@ public class GalleryFragment extends Fragment {
                     status.setHint("Tên không được để trống");
                 }
                 else {
-                    if(xoa!=0){
-                        database.QueryData("INSERT INTO Category VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataCategory();
-                        xoa=0;
-                    }else if(xoa==0){
-                        database.QueryData("INSERT INTO Category VALUES("+ (listCategory.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-//                        database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-                        getDataCategory();
-                    }
-//                    database.QueryData("INSERT INTO Status VALUES("+ (listStatus.size()+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
-////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
-//                    getDataStatus();
+                    database.QueryData("INSERT INTO Category VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
+                    getDataCategory();
                     dialog.cancel();
-//                    statusListViewAdapter.notifyDataSetChanged();
                 }
-
-
-
-
-
-//                listCategory.add(new Category(listCategory.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
                 dialog.cancel();
-//                cateListViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -176,13 +159,11 @@ public class GalleryFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-                //Cập nhật listview
-//                listCategory.set(index, new Category(index,status.getText().toString(),listCategory.get(index).Createdday));
-                database.QueryData("UPDATE Category SET CateName = '"+ status.getText().toString() +"' WHERE Id = '"+ (index+1) +"' ");
+                database.QueryData("UPDATE Category SET CateName = '"+ status.getText().toString() +"' WHERE CateName = '"+ listCategory.get(index).name +"' AND Created='"+listCategory.get(index).Createdday+"' ");
                 getDataCategory();
                 dialog.cancel();
-//                cateListViewAdapter.notifyDataSetChanged();
+                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -204,15 +185,11 @@ public class GalleryFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-                //Cập nhật listview
-//                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
-//                listCategory.remove(index);
-                xoa=index+1;
-                database.QueryData("DELETE FROM Category WHERE Id = '"+ (index + 1) +"' ");
+                database.QueryData("DELETE FROM Category WHERE CateName = '"+ listCategory.get(index).name +"' AND Created ='" + listCategory.get(index).Createdday +"' ");
                 getDataCategory();
                 dialog.cancel();
-//                cateListViewAdapter.notifyDataSetChanged();
+                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+
             }
         });
     }
@@ -227,11 +204,11 @@ public class GalleryFragment extends Fragment {
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if(item.getTitle()=="Sửa"){
-            Toast.makeText(getContext(),"Sửa",Toast.LENGTH_SHORT).show();
+
 //            fix=true;
             Fixdialog(listCategory.get(stt),stt);
         }else if(item.getTitle()=="Xóa"){
-            Toast.makeText(getContext(),"Xóa",Toast.LENGTH_SHORT).show();
+
             Deldialog(listCategory.get(stt),stt);
         }
         return super.onContextItemSelected(item);
