@@ -57,6 +57,8 @@ public class SlideshowFragment extends Fragment {
         //select data
         MainActivity activity = (MainActivity) getActivity();
         database= activity.getMyData();
+
+
 //         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
         getDataPriority();
 

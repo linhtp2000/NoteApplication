@@ -58,8 +58,12 @@ public class StatusFragment extends Fragment {
         statusListViewAdapter= new StatusListViewAdapter((listStatus));
         listViewStatus.setAdapter(statusListViewAdapter);
         //select data
+
+
         MainActivity activity = (MainActivity) getActivity();
         database= activity.getMyData();
+
+
 //         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
         getDataStatus();
 
