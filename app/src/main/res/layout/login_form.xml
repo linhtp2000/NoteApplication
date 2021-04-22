@@ -107,7 +107,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="5dp"
-        android:backgroundTint="@drawable/button_border_radius"
+        android:background="@drawable/button_border_radius"
         android:text="+"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
