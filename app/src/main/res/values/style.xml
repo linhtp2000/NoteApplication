@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Button" parent="Base.TextAppearance.AppCompat.Button" >
+        <item name="backgroundTint">#009688</item>
+    </style>
+    <style name="AddClose" parent="Base.TextAppearance.AppCompat.Button" >
+        <item name="backgroundTint">#7E8181</item>
+    </style>
+    <style name="AddAcoount" parent="Base.TextAppearance.AppCompat.Button" >
+        <item name="backgroundTint">#E91E63</item>
+    </style>
+</resources>
