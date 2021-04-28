@@ -1,7 +1,5 @@
 package com.example.appnote.ui.status;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -9,12 +7,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,11 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
-import com.example.appnote.MainActivity;
 import com.example.appnote.R;
-import com.example.appnote.Status;
+import com.example.appnote.StatusView;
 import com.example.appnote.StatusListViewAdapter;
 
 import java.text.SimpleDateFormat;
@@ -37,13 +29,13 @@ import java.util.Calendar;
 public class StatusFragment extends Fragment {
     private Button add;
     private StatusViewModel StatusViewModel;
-    ArrayList<Status> listStatus;
+    ArrayList<StatusView> listStatus;
     StatusListViewAdapter statusListViewAdapter;
     int stt;
     int xoa=0;
     String date;
     int phantutable=0;
-    Database database;
+  //  Database database;
 //    Database database;
     boolean fix;
 //    boolean fix=true;
@@ -59,10 +51,10 @@ public class StatusFragment extends Fragment {
         statusListViewAdapter= new StatusListViewAdapter((listStatus));
         listViewStatus.setAdapter(statusListViewAdapter);
         //select data
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        database= activity.getMyData();
-//         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
-        getDataStatus();
+//        ContentMainNav activity = (ContentMainNav) getActivity();
+//        database= activity.getMyData();
+////         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
+//        getDataStatus();
 
 
         add.setOnClickListener(new View.OnClickListener() {
@@ -88,19 +80,19 @@ public class StatusFragment extends Fragment {
         setHasOptionsMenu(true);
         return root;
     }
-    private void getDataStatus(){
-        Cursor dataStatus=database.GetData("SELECT * FROM Status where UserID =" +MainActivity.IDCurrent+"");
-        listStatus.clear();
-        while (dataStatus.moveToNext()){
-            String name = dataStatus.getString(1);
-            String created = dataStatus.getString(2);
-            int id=dataStatus.getInt(0);
-            listStatus.add(new Status(id,name,created));
-            statusListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void getDataStatus(){
+//        Cursor dataStatus=database.GetData("SELECT * FROM Status where UserID =" +MainActivity.IDCurrent+"");
+//        listStatus.clear();
+//        while (dataStatus.moveToNext()){
+//            String name = dataStatus.getString(1);
+//            String created = dataStatus.getString(2);
+//            int id=dataStatus.getInt(0);
+//            listStatus.add(new Status(id,name,created));
+//            statusListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     public void Showdialog(){
         Dialog dialog=new Dialog(getActivity());
@@ -126,23 +118,23 @@ public class StatusFragment extends Fragment {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 date=(simpleDateFormat.format(calendar.getTime()));
                 String StatusName=status.getText().toString();
-                if (StatusName.equals("")){
-                    status.setHint("Tên không được để trống");
-                }
-                else {
-                    database.QueryData("INSERT INTO Status VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
-//                    database.QueryData("INSERT INTO Status VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
-////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
-                    getDataStatus();
-                    dialog.cancel();
-//                    statusListViewAdapter.notifyDataSetChanged();
-                }
+//                if (StatusName.equals("")){
+//                    status.setHint("Tên không được để trống");
+//                }
+//                else {
+//                    database.QueryData("INSERT INTO Status VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
+////                    database.QueryData("INSERT INTO Status VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
+//////                    listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),date + "  " + gio + ":" + phut + ":" + giay));
+//                    getDataStatus();
+//                    dialog.cancel();
+////                    statusListViewAdapter.notifyDataSetChanged();
+//                }
 
             }
                 });
     }
 
-    public void Fixdialog(Status oldStatus,final int index){
+    public void Fixdialog(StatusView oldStatus, final int index){
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_add);
         dialog.setTitle("Update Status");
@@ -167,18 +159,18 @@ public class StatusFragment extends Fragment {
                 //Cập nhật listview
 //                Toast.makeText(getActivity(),index,Toast.LENGTH_LONG);
 //                database.QueryData("UPDATE Status SET StatusName = '"+ status.getText().toString() +"' WHERE StatusName = '"+ listStatus.get(index).name +"' AND Created='"+ listStatus.get(index).Created+"' ");
-                database.QueryData("UPDATE Status SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listStatus.get(index).name +"' AND Created='"+listStatus.get(index).Created+"' AND UserID="+MainActivity.IDCurrent +"");
-
-                getDataStatus();
-//                listStatus.set(index, new Status(index,status.getText().toString(),listStatus.get(index).Created));
-                dialog.cancel();
-                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+//                database.QueryData("UPDATE Status SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listStatus.get(index).name +"' AND Created='"+listStatus.get(index).Created+"' AND UserID="+MainActivity.IDCurrent +"");
+//
+//                getDataStatus();
+////                listStatus.set(index, new Status(index,status.getText().toString(),listStatus.get(index).Created));
+//                dialog.cancel();
+//                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
 
 //                statusListViewAdapter.notifyDataSetChanged();
             }
         });
     }
-    public void Deldialog(Status oldStatus,final int index){
+    public void Deldialog(StatusView oldStatus, final int index){
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_delete);
         Button close = (Button) dialog.findViewById(R.id.btnNo);
@@ -196,14 +188,14 @@ public class StatusFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                xoa=index+1;
-                database.QueryData("DELETE FROM Status WHERE Name = '"+ listStatus.get(index).name +"' AND Created ='" + listStatus.get(index).Created +"' AND UserID="+MainActivity.IDCurrent+"");
-
-//                database.QueryData("DELETE FROM Status WHERE StatusName = '"+ listStatus.get(index).name +"' AND Created='"+ listStatus.get(index).Created +"' ");
-//                listStatus.remove(index);
-                getDataStatus();
-                dialog.cancel();
-                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+//                xoa=index+1;
+//                database.QueryData("DELETE FROM Status WHERE Name = '"+ listStatus.get(index).name +"' AND Created ='" + listStatus.get(index).Created +"' AND UserID="+MainActivity.IDCurrent+"");
+//
+////                database.QueryData("DELETE FROM Status WHERE StatusName = '"+ listStatus.get(index).name +"' AND Created='"+ listStatus.get(index).Created +"' ");
+////                listStatus.remove(index);
+//                getDataStatus();
+//                dialog.cancel();
+//                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
 
 //                statusListViewAdapter.notifyDataSetChanged();
             }

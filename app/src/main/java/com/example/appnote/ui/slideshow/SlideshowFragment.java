@@ -1,7 +1,6 @@
 package com.example.appnote.ui.slideshow;
 
 import android.app.Dialog;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -19,18 +17,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.appnote.Category;
-import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
-import com.example.appnote.MainActivity;
 import com.example.appnote.PrioListViewAdapter;
-import com.example.appnote.Priority;
+import com.example.appnote.PriorityView;
 import com.example.appnote.R;
-import com.example.appnote.Status;
-import com.example.appnote.ui.gallery.GalleryFragment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,11 +30,11 @@ import java.util.Calendar;
 public class SlideshowFragment extends Fragment {
 
     private SlideshowViewModel slideshowViewModel;
-    ArrayList<Priority> listPriority;
+    ArrayList<PriorityView> listPriority;
     PrioListViewAdapter prioListViewAdapter;
     int stt;
-    Database database;
-    int phantutable=0;
+//    Database database;
+//    int phantutable=0;
 
     int xoa=0;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -56,11 +47,11 @@ public class SlideshowFragment extends Fragment {
         prioListViewAdapter= new PrioListViewAdapter(listPriority);
         listPri.setAdapter(prioListViewAdapter);
 
-        //select data
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        database= activity.getMyData();
-//         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
-        getDataPriority();
+//        //select data
+//        ContentMainNav activity = (ContentMainNav) getActivity();
+//        database= activity.getMyData();
+////         Toast.makeText(getActivity(),StatusName,Toast.LENGTH_SHORT).show();
+//        getDataPriority();
 
 
 
@@ -91,19 +82,19 @@ public class SlideshowFragment extends Fragment {
 //        });
         return root;
     }
-    private void getDataPriority(){
-        Cursor dataPriority=database.GetData("SELECT * FROM Priority where UserID ="+MainActivity.IDCurrent+"");
-        listPriority.clear();
-        while (dataPriority.moveToNext()){
-            String name = dataPriority.getString(1);
-            String created = dataPriority.getString(2);
-            int id=dataPriority.getInt(0);
-            listPriority.add(new Priority(id,name,created));
-            prioListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void getDataPriority(){
+//        Cursor dataPriority=database.GetData("SELECT * FROM Priority where UserID ="+MainActivity.IDCurrent+"");
+//        listPriority.clear();
+//        while (dataPriority.moveToNext()){
+//            String name = dataPriority.getString(1);
+//            String created = dataPriority.getString(2);
+//            int id=dataPriority.getInt(0);
+//            listPriority.add(new Priority(id,name,created));
+//            prioListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//    }
     public void Showdialog(){
         Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_add);
@@ -139,24 +130,24 @@ public class SlideshowFragment extends Fragment {
 //                    database.QueryData("INSERT INTO Priority VALUES("+ (listPriority.size() + 1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
 //                    getDataPriority();
 //                }
-                if (StatusName.equals("")){
-                    status.setHint("Tên không được để trống");
-                }
-                else {
-                    database.QueryData("INSERT INTO Priority VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
-
-//                    database.QueryData("INSERT INTO Priority VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
-                    getDataPriority();
-                    dialog.cancel();
-                }
-
-
-                dialog.cancel();
-//                prioListViewAdapter.notifyDataSetChanged();
+//                if (StatusName.equals("")){
+//                    status.setHint("Tên không được để trống");
+//                }
+//                else {
+//                    database.QueryData("INSERT INTO Priority VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
+//
+////                    database.QueryData("INSERT INTO Priority VALUES("+ (phantutable+1) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
+//                    getDataPriority();
+//                    dialog.cancel();
+//                }
+//
+//
+//                dialog.cancel();
+////                prioListViewAdapter.notifyDataSetChanged();
             }
         });
     }
-    public void Fixdialog(Priority oldStatus, final int index){
+    public void Fixdialog(PriorityView oldStatus, final int index){
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_add);
         dialog.setTitle("Update Status");
@@ -181,16 +172,16 @@ public class SlideshowFragment extends Fragment {
                 //Cập nhật listview
 //                listPriority.set(index, new Priority(index,status.getText().toString(),listPriority.get(index).Createdday));
 //                database.QueryData("UPDATE Priority SET PrioName = '"+ status.getText().toString() +"' WHERE PrioName = '"+ listPriority.get(index).name +"' AND Created='"+ listPriority.get(index).Createdday+"' ");
-                database.QueryData("UPDATE Priority SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listPriority.get(index).name +"' AND Created='"+listPriority.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent +"");
-
-                getDataPriority();
-                dialog.cancel();
-                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+//                database.QueryData("UPDATE Priority SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listPriority.get(index).name +"' AND Created='"+listPriority.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent +"");
+//
+//                getDataPriority();
+//                dialog.cancel();
+//                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
 //                prioListViewAdapter.notifyDataSetChanged();
             }
         });
     }
-    public void Deldialog(Priority oldStatus, final int index){
+    public void Deldialog(PriorityView oldStatus, final int index){
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_delete);
         Button close = (Button) dialog.findViewById(R.id.btnNo);
@@ -215,12 +206,12 @@ public class SlideshowFragment extends Fragment {
 //                listPriority.remove(index);
 //                database.QueryData("DELETE FROM Priority WHERE PrioName = '"+ listPriority.get(index).name +"' AND Created='"+listPriority.get(index).Createdday+"' ");
 //                listStatus.remove(index);
-                database.QueryData("DELETE FROM Priority WHERE Name = '"+ listPriority.get(index).name +"' AND Created ='" + listPriority.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
-
-                getDataPriority();
-
-                dialog.cancel();
-                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+//                database.QueryData("DELETE FROM Priority WHERE Name = '"+ listPriority.get(index).name +"' AND Created ='" + listPriority.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
+//
+//                getDataPriority();
+//
+//                dialog.cancel();
+//                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
 //                prioListViewAdapter.notifyDataSetChanged();
             }
         });

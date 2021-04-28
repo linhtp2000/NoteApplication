@@ -15,24 +15,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
 import com.example.appnote.MainActivity;
 import com.example.appnote.R;
-import com.example.appnote.RegisterAccount;
-import com.example.appnote.User;
-import com.example.appnote.ui.home.HomeFragment;
+import com.example.appnote.UserView;
+import com.example.appnote.ui.Database.Entity.User;
+import com.example.appnote.ui.Database.NoteDatabase;
 
 public class EditProfileFragment extends Fragment {
 
     private EditViewModel mViewModel;
-    Database db;
-    Database DB;
+//    Database db;
+//    Database DB;
     String getMail;
-    User user = new User();
+    UserView user = new UserView();
     public static EditProfileFragment newInstance() {
         return new EditProfileFragment();
     }
@@ -45,14 +43,14 @@ public class EditProfileFragment extends Fragment {
         final EditText editMail = view.findViewById(R.id.edit_mail);
         final EditText editFirstName = view.findViewById(R.id.edit_firstName);
         final EditText editLastName = view.findViewById(R.id.edit_lastName);
-        DB = new Database(getActivity());
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        db  = activity.getMyData();
-        getDataUser();
-
-        editMail.setText(user.email);
-        editFirstName.setText(user.firstname);
-        editLastName.setText(user.lastname);
+//        DB = new Database(getActivity());
+//        ContentMainNav activity = (ContentMainNav) getActivity();
+//        db  = activity.getMyData();
+//        getDataUser();
+        User user=  NoteDatabase.getInstance(this.getContext()).getUserDao().getUserFromId(MainActivity.IDCurrent);
+        editMail.setText(user.getEmail());
+        editFirstName.setText(user.getFirstName());
+        editLastName.setText(user.getLastName());
         Button btn_save = (Button) view.findViewById(R.id.btnChange);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,12 +58,13 @@ public class EditProfileFragment extends Fragment {
                 String firstName = editFirstName.getText().toString().trim();
                 String lastName = editLastName.getText().toString().trim();
                 String email = editMail.getText().toString().trim();
-                Boolean checkupdatedata = DB.UpdateData(MainActivity.IDCurrent, email, firstName, lastName);
-                if(checkupdatedata==true)
-                {
+               // Boolean checkupdatedata = DB.UpdateData(MainActivity.IDCurrent, email, firstName, lastName);
+                try{
+                    NoteDatabase.getInstance(getActivity()).getUserDao().update(new User(MainActivity.IDCurrent, firstName,lastName,email,user.getPassword()));
                     Toast.makeText(getActivity(), "Chỉnh sửa xong nhé!", Toast.LENGTH_SHORT).show();
                 }
-                else {
+                catch (Exception ex)
+                {
                     Toast.makeText(getActivity(), "OMG, không sửa được nhé!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -86,14 +85,14 @@ public class EditProfileFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(EditViewModel.class);
         // TODO: Use the ViewModel
     }
-    private void getDataUser(){
-        Cursor cursor = db.getUser(MainActivity.IDCurrent);
-        while (cursor.moveToNext()) {
-            user.firstname = cursor.getString(1);
-            user.lastname = cursor.getString(2);
-            user.email = cursor.getString(3);
-            break;
-        }
-        cursor.close();
-    }
+//    private void getDataUser(){
+//        Cursor cursor = db.getUser(MainActivity.IDCurrent);
+//        while (cursor.moveToNext()) {
+//            user.firstname = cursor.getString(1);
+//            user.lastname = cursor.getString(2);
+//            user.email = cursor.getString(3);
+//            break;
+//        }
+//        cursor.close();
+//    }
 }

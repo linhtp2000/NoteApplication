@@ -1,22 +1,38 @@
-package com.example.appnote.ui.Database;
+package com.example.appnote.ui.Database.Entity;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
 @Entity
 public class User {
     @PrimaryKey(autoGenerate = true)
-    private int Id;
+    public int Id;
     private String FirstName;
     private String LastName;
     private String Email;
     private String Password;
 
-    public User(int id, String firstName, String lastName, String email, String password) {
-        Id = id;
+    public User(){}
+    public User( String firstName, String lastName, String email, String password) {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
         Password = password;
+    }
+    public User( int id,String firstName, String lastName, String email, String password) {
+        Id=id;
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        Password = password;
+    }
+
+    public int getId() {
+        return Id;
+    }
+
+    public void setId(int id) {
+        Id = id;
     }
 
     public void setPassword(String password) {

@@ -11,11 +11,11 @@ import java.util.ArrayList;
 public class StatusListViewAdapter extends BaseAdapter {
 
     private Context context;
-    final ArrayList<Status> listStatus;
+    final ArrayList<StatusView> listStatus;
 
 
 
-    public StatusListViewAdapter(ArrayList<Status> listStatus) {
+    public StatusListViewAdapter(ArrayList<StatusView> listStatus) {
         this.listStatus = listStatus;
     }
 
@@ -52,7 +52,7 @@ public class StatusListViewAdapter extends BaseAdapter {
 //        ((TextView) viewStatus.findViewById(R.id.statusname)).setText(String.format("Name: %s",status.name));
 //        ((TextView) viewStatus.findViewById(R.id.statuscreate)).setText(String.format("Created: %s",status.Created));
 //            ((TextView) viewStatus.findViewById(R.id.tv_email)).setText(String.format("Mail: %s",user.email));
-        Status statusOne= listStatus.get(position);
+        StatusView statusOne= listStatus.get(position);
         ((TextView) viewStatus.findViewById(R.id.statusname)).setText(String.format("Name: %s",statusOne.name));
         ((TextView) viewStatus.findViewById(R.id.statuscreate)).setText(String.format("Created: %s",statusOne.Created));
 

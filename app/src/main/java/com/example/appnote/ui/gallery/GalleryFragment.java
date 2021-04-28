@@ -1,7 +1,7 @@
 package com.example.appnote.ui.gallery;
 
 import android.app.Dialog;
-import android.database.Cursor;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -19,30 +18,29 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.appnote.CateListViewAdapter;
-import com.example.appnote.Category;
-import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
+import com.example.appnote.CategoryView;
 import com.example.appnote.MainActivity;
 import com.example.appnote.R;
-import com.example.appnote.Status;
-import com.example.appnote.ui.status.StatusFragment;
+import com.example.appnote.ui.Database.Entity.Category;
+import com.example.appnote.ui.Database.Entity.User;
+import com.example.appnote.ui.Database.NoteDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class GalleryFragment extends Fragment {
 
     private GalleryViewModel galleryViewModel;
-    ArrayList<Category> listCategory;
+    List<Category> listCategory;
     CateListViewAdapter cateListViewAdapter;
     int stt;
     int phantutable=0;
-    Database database;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         galleryViewModel =
@@ -50,14 +48,15 @@ public class GalleryFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
         final TextView textView = root.findViewById(R.id.text_gallery);
         final ListView listCate = root.findViewById(R.id.listcCate);
-        listCategory=new ArrayList<>();
-//        listStatus.add(new Status(3,"cc","17/04/2021 2:24:00 AM"));
-        cateListViewAdapter= new CateListViewAdapter((listCategory));
+        listCategory=new ArrayList<>() ;
+
+
+        cateListViewAdapter= new CateListViewAdapter(listCategory);
         listCate.setAdapter(cateListViewAdapter);
         //Select Data
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        database= activity.getMyData();
-        getDataCategory();
+//        ContentMainNav activity = (ContentMainNav) getActivity();
+//        database= activity.getMyData();
+        getDataCategory(getActivity());
 
 
 
@@ -72,7 +71,7 @@ public class GalleryFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 stt=position;
-                Toast.makeText(getContext(),listCategory.get(stt).Createdday,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),listCategory.get(stt).getDate(),Toast.LENGTH_LONG).show();
                 return false;
             }
         });
@@ -86,18 +85,8 @@ public class GalleryFragment extends Fragment {
         setHasOptionsMenu(true);
         return root;
     }
-    private void getDataCategory(){
-        Cursor dataStatus=database.GetData("SELECT * FROM Category where UserID ="+MainActivity.IDCurrent+"");
-        listCategory.clear();
-        while (dataStatus.moveToNext()){
-            String name = dataStatus.getString(1);
-            String created = dataStatus.getString(2);
-            int id=dataStatus.getInt(0);
-            listCategory.add(new Category(id,name,created));
-            cateListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
+    private void getDataCategory(Context context){
+      listCategory= NoteDatabase.getInstance(context).getCategoryDao().getAll();
     }
     public void Showdialog(){
         Dialog dialog=new Dialog(getActivity());
@@ -130,8 +119,17 @@ public class GalleryFragment extends Fragment {
                     status.setHint("Tên không được để trống");
                 }
                 else {
-                    database.QueryData("INSERT INTO Category VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
-                    getDataCategory();
+                    try{
+                        String day=date+ gio + ":" + phut + ":" + giay;
+                        NoteDatabase.getInstance(getContext()).getCategoryDao().insert(new Category(status.getText().toString(),day,MainActivity.IDCurrent));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.makeText(getContext(), "OMG, không thêm được nhé!", Toast.LENGTH_SHORT).show();
+                    }
+//                    database.QueryData("INSERT INTO Category VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
+                    getDataCategory(getContext());
                     dialog.cancel();
                 }
                 dialog.cancel();
@@ -159,12 +157,21 @@ public class GalleryFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                database.QueryData("UPDATE Category SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listCategory.get(index).name +"' AND Created='"+listCategory.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent +"");
-//                database.QueryData("UPDATE Category SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listCategory.get(index).name +"' AND Created='"+listCategory.get(index).Createdday+"' ");
-
-                getDataCategory();
+                Category category= NoteDatabase.getInstance(getActivity()).getCategoryDao().getCategory(listCategory.get(index).getName(),listCategory.get(index).getDate(),MainActivity.IDCurrent);
+                try{
+                    NoteDatabase.getInstance(getContext()).getCategoryDao().update(new Category(category.getId(),status.getText().toString(),category.getDate(),MainActivity.IDCurrent));
+                    Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+                }
+                catch (Exception ex)
+                {
+                    Toast.makeText(getContext(), "OMG, không sửa được nhé!", Toast.LENGTH_SHORT).show();
+                }
+//                database.QueryData("UPDATE Category SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listCategory.get(index).name +"' AND Created='"+listCategory.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent +"");
+////                database.QueryData("UPDATE Category SET Name = '"+ status.getText().toString() +"' WHERE Name = '"+ listCategory.get(index).name +"' AND Created='"+listCategory.get(index).Createdday+"' ");
+//
+                getDataCategory(getContext());
                 dialog.cancel();
-                Toast.makeText(getContext(),"Sửa thành công!",Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -187,14 +194,23 @@ public class GalleryFragment extends Fragment {
         addStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                database.QueryData("DELETE FROM Category WHERE Name = '"+ listCategory.get(index).name +"' AND Created ='" + listCategory.get(index).Createdday +"' AND UserID ="+MainActivity.IDCurrent+"");
-                database.QueryData("DELETE FROM Category WHERE Name = '"+ listCategory.get(index).name +"' AND Created ='" + listCategory.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
-
-
-
-                getDataCategory();
-                dialog.cancel();
-                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+                Category category= NoteDatabase.getInstance(getContext()).getCategoryDao().getCategory(listCategory.get(index).getName(),listCategory.get(index).getDate(),MainActivity.IDCurrent);
+                try{
+                    NoteDatabase.getInstance(getContext()).getCategoryDao().delete(category);
+                    Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+                }
+                catch (Exception ex)
+                {
+                    Toast.makeText(getContext(), "OMG, không sửa được nhé!", Toast.LENGTH_SHORT).show();
+                }
+////                database.QueryData("DELETE FROM Category WHERE Name = '"+ listCategory.get(index).name +"' AND Created ='" + listCategory.get(index).Createdday +"' AND UserID ="+MainActivity.IDCurrent+"");
+//                database.QueryData("DELETE FROM Category WHERE Name = '"+ listCategory.get(index).name +"' AND Created ='" + listCategory.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
+//
+//
+//
+                getDataCategory(getContext());
+               dialog.cancel();
+//                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
 
             }
         });

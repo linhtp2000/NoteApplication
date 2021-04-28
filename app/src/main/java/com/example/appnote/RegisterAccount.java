@@ -12,8 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.appnote.ui.Database.Entity.User;
+import com.example.appnote.ui.Database.NoteDatabase;
+
 public class RegisterAccount extends AppCompatActivity {
-    Database db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,7 +26,7 @@ public class RegisterAccount extends AppCompatActivity {
         EditText editMail = (EditText) findViewById(R.id.txtEmail_register);
         EditText editPassword = (EditText) findViewById(R.id.txtpassword_register);
         EditText editConfirmPassword = (EditText) findViewById(R.id.txtrepeatepass_register);
-        db = new Database(this);
+
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,10 +36,10 @@ public class RegisterAccount extends AppCompatActivity {
                 int id = 0;
                 if(password.equals(confirm))
                 {
-                    Boolean checkmail = db.checkMail(email);
+                    Boolean checkmail = checkMail(email);
                     if(checkmail == true)
                     {
-                        Boolean checkInsert =  db.insertData(null, email, password, null, null);
+                        Boolean checkInsert =  insertData(email, password, "", "");
                         if(checkInsert == true)
                         {
 //                            int i=getIdFromEmail(email.toString());
@@ -67,16 +70,26 @@ public class RegisterAccount extends AppCompatActivity {
     }
     private int getIdFromEmail(String email)
     {
-        String query = "SELECT * FROM User WHERE EmailName= '"+email+"';";
-        SQLiteDatabase DB = db.getWritableDatabase();
-        Cursor cursor = DB.rawQuery(query, null);
-        int id = 0;
-        while (cursor.moveToNext()) {
-            id = cursor.getInt(0);
-            break;
-        }
-        cursor.close();
-        db.close();
+
+        int id = NoteDatabase.getInstance(this).getUserDao().getId(email);
         return id;
+    }
+    public Boolean insertData( String email, String password, String firstName, String lastName)
+    {
+        User user= new User(firstName,lastName,email,password);
+        try {
+            NoteDatabase.getInstance(this).getUserDao().insert(user);
+            return  true;
+        }
+        catch (Exception ex){
+            return false;
+        }
+
+    }
+    public Boolean checkMail(String email)
+    {
+        String e= NoteDatabase.getInstance(this).getUserDao().getEmail(email);
+        if(e!=null) return false;
+        else return true;
     }
 }

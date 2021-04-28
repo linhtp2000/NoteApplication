@@ -2,7 +2,6 @@ package com.example.appnote.ui.changepassword;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -19,17 +18,17 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
 import com.example.appnote.MainActivity;
 import com.example.appnote.R;
-import com.example.appnote.User;
-import com.example.appnote.ui.home.HomeFragment;
+import com.example.appnote.UserView;
+import com.example.appnote.ui.Database.Entity.User;
+import com.example.appnote.ui.Database.NoteDatabase;
 
 public class ChangePasswordFragment extends Fragment {
     private ChangePasswordViewModel mViewModel;
-    Database db;
-    Database DB;
-    User user = new User();
+   // Database db;
+   // Database DB;
+    UserView user = new UserView();
 
     public static ChangePasswordFragment newInstance() {
         return new ChangePasswordFragment();
@@ -42,11 +41,9 @@ public class ChangePasswordFragment extends Fragment {
          EditText editPassOld = view.findViewById(R.id.edit_passold);
         final EditText editPassNew = view.findViewById(R.id.edit_passnew);
         final EditText editConfirmPass = view.findViewById(R.id.edit_confirmpass);
-        DB = new Database(getActivity());
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        db  = activity.getMyData();
-        getDataUser();
-        editPassOld.setText(user.password);
+
+   User user=  NoteDatabase.getInstance(this.getContext()).getUserDao().getUserFromId(MainActivity.IDCurrent);
+        editPassOld.setText(user.getPassword());
         Button btn_save = (Button) view.findViewById(R.id.btnChangepass);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,14 +53,16 @@ public class ChangePasswordFragment extends Fragment {
                 String confirmPass = editConfirmPass.getText().toString();
                 if(newPass.equals(confirmPass))
                 {
-                    Boolean checkupdatedata = DB.UpdatePass(MainActivity.IDCurrent, newPass);
-                    if(checkupdatedata==true)
-                    {
-                        Toast.makeText(getActivity(), "Chỉnh sửa xong nhé!", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        Toast.makeText(getActivity(), "OMG, không sửa được nhé!", Toast.LENGTH_SHORT).show();
-                    }
+             //    Boolean checkupdatedata = UpdatePass(new User(MainActivity.IDCurrent, user.getFirstName(),user.getLastName(),user.getEmail(),newPass));
+
+                   try{
+                       NoteDatabase.getInstance(getActivity()).getUserDao().update(new User(MainActivity.IDCurrent, user.getFirstName(),user.getLastName(),user.getEmail(),newPass));
+                       Toast.makeText(getActivity(), "Chỉnh sửa xong nhé!", Toast.LENGTH_SHORT).show();
+                   }
+                   catch (Exception ex)
+                   {
+                       Toast.makeText(getActivity(), "OMG, không sửa được nhé!", Toast.LENGTH_SHORT).show();
+                   }
                 }
                 else
                 {
@@ -87,12 +86,12 @@ public class ChangePasswordFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(ChangePasswordViewModel.class);
         // TODO: Use the ViewModel
     }
-    private void getDataUser(){
-        Cursor cursor = db.getUser(MainActivity.IDCurrent);
-        while (cursor.moveToNext()) {
-            user.password = cursor.getString(4);
-            break;
-        }
-        cursor.close();
-    }
+//    private void getDataUser(){
+//        Cursor cursor = db.getUser(MainActivity.IDCurrent);
+//        while (cursor.moveToNext()) {
+//            user.password = cursor.getString(4);
+//            break;
+//        }
+//        cursor.close();
+//    }
 }

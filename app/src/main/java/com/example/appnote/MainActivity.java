@@ -1,33 +1,26 @@
 package com.example.appnote;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Menu;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.appnote.ui.editprofile.EditProfileFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
+import com.example.appnote.ui.Database.Entity.User;
+import com.example.appnote.ui.Database.NoteDatabase;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    public Database database;
+   // public Database database;
     String StatusName;
     Cursor dataStatus;
     public static int IDCurrent;
@@ -36,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.login_form);
-        database = new Database(this);
+      //  database = new Database(this);
 
-       // this.deleteDatabase("note.sqlite");
+       // this.deleteDatabase("NoteApp.db");
         //  DatabaseHelper  helper= new DatabaseHelper(this);
         //  SQLiteDatabase db=helper.getReadableDatabase();
         //  InsertDataToDatabase();
@@ -79,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = mail.getText().toString().trim();
                 String password = pass.getText().toString().trim();
-                Boolean checklogin = database.login(email, password);
+                Boolean checklogin = login(email, password);
                 if(checklogin == true)
                 {
                     int id=getIdFromEmail(mail.getText().toString());
@@ -113,16 +106,16 @@ public class MainActivity extends AppCompatActivity {
     }
     private int getIdFromEmail(String email)
     {
-        String query = "SELECT * FROM User WHERE EmailName= '"+email+"';";
-        SQLiteDatabase DB = database.getWritableDatabase();
-        Cursor cursor = DB.rawQuery(query, null);
-        int id = 0;
-        while (cursor.moveToNext()) {
-            id = cursor.getInt(0);
-            break;
-        }
-        cursor.close();
-        database.close();
+
+        int id = NoteDatabase.getInstance(this).getUserDao().getId(email);
         return id;
     }
+    public Boolean login(String email, String password)
+    {
+
+        User user= NoteDatabase.getInstance(this).getUserDao().getUser(email,password);
+        if(user!=null) return true;
+        else return false;
+    }
+
 }

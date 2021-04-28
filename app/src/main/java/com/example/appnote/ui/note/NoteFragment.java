@@ -2,9 +2,6 @@ package com.example.appnote.ui.note;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -12,51 +9,40 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.appnote.CateListViewAdapter;
-import com.example.appnote.Category;
-import com.example.appnote.ContentMainNav;
-import com.example.appnote.Database;
-import com.example.appnote.MainActivity;
-import com.example.appnote.Note;
+import com.example.appnote.CategoryView;
+import com.example.appnote.NoteView;
 import com.example.appnote.NoteListViewAdapter;
 import com.example.appnote.PrioListViewAdapter;
-import com.example.appnote.Priority;
+import com.example.appnote.PriorityView;
 import com.example.appnote.R;
-import com.example.appnote.Status;
+import com.example.appnote.StatusView;
 import com.example.appnote.StatusListViewAdapter;
-import com.example.appnote.ui.note.NoteViewModel;
-import com.example.appnote.ui.status.StatusFragment;
-import com.example.appnote.ui.status.StatusViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
 
 public class NoteFragment extends Fragment {
 
     private com.example.appnote.ui.note.NoteViewModel NoteViewModel;
-    ArrayList<Note> listNotee;
-    ArrayList<Category> listCategory;
-    ArrayList<Priority> listPriority;
-    ArrayList<Status> listStatus;
-    Database database;
+    ArrayList<NoteView> listNotee;
+    ArrayList<CategoryView> listCategory;
+    ArrayList<PriorityView> listPriority;
+    ArrayList<StatusView> listStatus;
+    //Database database;
     int stt;
     int cate;
     int prio;
@@ -76,9 +62,9 @@ public class NoteFragment extends Fragment {
         noteListViewAdapter = new NoteListViewAdapter(listNotee);
         listviewNote.setAdapter(noteListViewAdapter);
 
-        ContentMainNav activity = (ContentMainNav) getActivity();
-        database= activity.getMyData();
-        getDataNote();
+//        ContentMainNav activity = (ContentMainNav) getActivity();
+//        database= activity.getMyData();
+//        getDataNote();
 
         listviewNote.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -113,17 +99,17 @@ public class NoteFragment extends Fragment {
         Button close = (Button) dialog.findViewById(R.id.btnCancel);
         Button addStatus =(Button) dialog.findViewById(R.id.btnAdd);
         Button date =(Button) dialog.findViewById(R.id.btnDate);
-        listCategory=new ArrayList<>();
-        cateListViewAdapter=new CateListViewAdapter(listCategory);
-        getDataCategory();
-
-        listPriority=new ArrayList<>();
-        prioListViewAdapter=new PrioListViewAdapter(listPriority);
-        getDataPriority();
-
-        listStatus=new ArrayList<>();
-        statusListViewAdapter=new StatusListViewAdapter(listStatus);
-        getDataStatus();
+//        listCategory=new ArrayList<>();
+//        cateListViewAdapter=new CateListViewAdapter(listCategory);
+//        getDataCategory();
+//
+//        listPriority=new ArrayList<>();
+//        prioListViewAdapter=new PrioListViewAdapter(listPriority);
+//        getDataPriority();
+//
+//        listStatus=new ArrayList<>();
+//        statusListViewAdapter=new StatusListViewAdapter(listStatus);
+//        getDataStatus();
 
           spnCate.setAdapter(cateListViewAdapter);
         spnPrio.setAdapter(prioListViewAdapter);
@@ -207,10 +193,10 @@ public class NoteFragment extends Fragment {
                 }
                 else {
 //                    database.QueryData("INSERT INTO Category VALUES(null,'"+status.getText().toString()+"','"+ date+"  "+ gio + ":" + phut + ":" + giay+"',"+MainActivity.IDCurrent+")");
-                    database.QueryData("INSERT INTO Notes VALUES(null,'" + namePlan.getText().toString() + "','" + listCategory.get(cate).id + "','" + listPriority.get(prio).id + "','" + listStatus.get(stat).id + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
+                   // database.QueryData("INSERT INTO Notes VALUES(null,'" + namePlan.getText().toString() + "','" + listCategory.get(cate).id + "','" + listPriority.get(prio).id + "','" + listStatus.get(stat).id + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
 
 //                    database.QueryData("INSERT INTO Notes VALUES(null,'" + namePlan.getText().toString() + "','" +listCategory.get(cate).name + "','" + listPriority.get(prio).name+ "','" + listStatus.get(stat).name+ "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"',"+MainActivity.IDCurrent+")");
-                    getDataNote();
+                  //  getDataNote();
 //                    if(xoa!=0){
 //                        database.QueryData("INSERT INTO Notes VALUES("+ (xoa) + ",'" + namePlan.getText().toString() + "','" + listCategory.get(cate).name + "','" + listPriority.get(prio).name + "','" + listStatus.get(stat).name + "','" + date.getText().toString() +"','"+ datee+"  "+ gio + ":" + phut + ":" + giay +"')");
 ////                        database.QueryData("INSERT INTO Priority VALUES("+ (xoa) +",'"+status.getText().toString() +"','"+ date+"  "+ gio + ":" + phut + ":" + giay +"')");
@@ -241,7 +227,7 @@ public class NoteFragment extends Fragment {
             }
         });
     }
-    public void Fixdialog(Note oldStatus, final int index){
+    public void Fixdialog(NoteView oldStatus, final int index){
 //        Showdialog();
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.note_add);
@@ -254,18 +240,18 @@ public class NoteFragment extends Fragment {
         Button addStatus =(Button) dialog.findViewById(R.id.btnAdd);
         Button date =(Button) dialog.findViewById(R.id.btnDate);
         listCategory=new ArrayList<>();
-        cateListViewAdapter=new CateListViewAdapter(listCategory);
-        getDataCategory();
-
-
-        listPriority=new ArrayList<>();
-        prioListViewAdapter=new PrioListViewAdapter(listPriority);
-        getDataPriority();
-
-
-        listStatus=new ArrayList<>();
-        statusListViewAdapter=new StatusListViewAdapter(listStatus);
-        getDataStatus();
+//        cateListViewAdapter=new CateListViewAdapter(listCategory);
+//        getDataCategory();
+//
+//
+//        listPriority=new ArrayList<>();
+//        prioListViewAdapter=new PrioListViewAdapter(listPriority);
+//        getDataPriority();
+//
+//
+//        listStatus=new ArrayList<>();
+//        statusListViewAdapter=new StatusListViewAdapter(listStatus);
+//        getDataStatus();
 //        ArrayAdapter okay=new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item,listCate);
 //        spnCate.setAdapter(okay);
         spnCate.setAdapter(cateListViewAdapter);
@@ -342,14 +328,14 @@ public class NoteFragment extends Fragment {
 //                String prioname=getNameFromId(listPriority.get(index).id,"Priority");
 //                    String statusname=getNameFromId(listStatus.get(index).id,"Status");
 
-                database.QueryData("UPDATE Notes SET Name = '"+ note.getText().toString() +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created ='"+ listNotee.get(index).Createdday+"' AND UserID="+ MainActivity.IDCurrent+" ");
-                database.QueryData("UPDATE Notes SET CateID = '"+ listCategory.get(cate).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
-                database.QueryData("UPDATE Notes SET PrioID = '"+ listPriority.get(prio).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
-                database.QueryData("UPDATE Notes SET StaID = '"+ listStatus.get(stat).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent+"");
-                database.QueryData("UPDATE Notes SET Planday = '"+ date.getText().toString() +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent+"");
+//                database.QueryData("UPDATE Notes SET Name = '"+ note.getText().toString() +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created ='"+ listNotee.get(index).Createdday+"' AND UserID="+ MainActivity.IDCurrent+" ");
+//                database.QueryData("UPDATE Notes SET CateID = '"+ listCategory.get(cate).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
+//                database.QueryData("UPDATE Notes SET PrioID = '"+ listPriority.get(prio).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent+"");
+//                database.QueryData("UPDATE Notes SET StaID = '"+ listStatus.get(stat).id +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent+"");
+//                database.QueryData("UPDATE Notes SET Planday = '"+ date.getText().toString() +"' WHERE Name = '"+ listNotee.get(index).name +"' AND Created = '"+listNotee.get(index).Createdday+"' AND UserID="+MainActivity.IDCurrent+"");
+//
 
-
-                getDataNote();
+              //  getDataNote();
 //                listStatus.add(new Status(listStatus.size() + 1,status.getText().toString(),"17/04/2021 2:24:00 AM"));
                 //Cập nhật listview
 //                listNotee.set(index, new Note(listNotee.size() + 1,note.getText().toString(),listCategory.get(cate).name,listPriority.get(prio).name,listStatus.get(stat).name,date.getText().toString(),listNotee.get(index).Createdday));
@@ -360,7 +346,7 @@ public class NoteFragment extends Fragment {
             }
         });
     }
-    public void Deldialog(Note oldStatus, final int index){
+    public void Deldialog(NoteView oldStatus, final int index){
         final Dialog dialog=new Dialog(getActivity());
         dialog.setContentView(R.layout.status_delete);
         Button close = (Button) dialog.findViewById(R.id.btnNo);
@@ -382,78 +368,78 @@ public class NoteFragment extends Fragment {
                 //Cập nhật listview
 //                listStatus.set(index, new Status(index,status.getText().toString(),"17/04/2021 2:24:00 AM"));
 //                listNotee.remove(index);
-                xoa=index+1;
-                database.QueryData("DELETE FROM Notes WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+ listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent +"");
-
-//                database.QueryData("DELETE FROM Notes WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+ listNotee.get(index).Createdday +"' ");
-                getDataNote();
-                dialog.cancel();
-                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
+//                xoa=index+1;
+//                database.QueryData("DELETE FROM Notes WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+ listNotee.get(index).Createdday +"' AND UserID="+MainActivity.IDCurrent +"");
+//
+////                database.QueryData("DELETE FROM Notes WHERE Name = '"+ listNotee.get(index).name +"' AND Created='"+ listNotee.get(index).Createdday +"' ");
+//                getDataNote();
+//                dialog.cancel();
+//                Toast.makeText(getContext(),"Xóa thành công!",Toast.LENGTH_SHORT).show();
 
 //                noteListViewAdapter.notifyDataSetChanged();
             }
         });
     }
-    private void getDataCategory(){
-        Cursor dataCategory=database.GetData("SELECT * FROM Category where UserID ="+MainActivity.IDCurrent+"");
-        listCategory.clear();
-        while (dataCategory.moveToNext()){
-            String name = dataCategory.getString(1);
-            String created = dataCategory.getString(2);
-            int id=dataCategory.getInt(0);
-            listCategory.add(new Category(id,name,created));
-            cateListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void getDataStatus(){
-        Cursor dataStatus=database.GetData("SELECT * FROM Status where UserID ="+MainActivity.IDCurrent+"");
-        listStatus.clear();
-        while (dataStatus.moveToNext()){
-            String name = dataStatus.getString(1);
-            String created = dataStatus.getString(2);
-            int id=dataStatus.getInt(0);
-            listStatus.add(new Status(id,name,created));
-            statusListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void getDataPriority(){
-        Cursor dataPriority=database.GetData("SELECT * FROM Priority where UserID ="+MainActivity.IDCurrent+"");
-        listPriority.clear();
-        while (dataPriority.moveToNext()){
-            String name = dataPriority.getString(1);
-            String created = dataPriority.getString(2);
-            int id=dataPriority.getInt(0);
-            listPriority.add(new Priority(id,name,created));
-            prioListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void getDataNote(){
-        Cursor dataNote=database.GetData("SELECT * FROM Notes where UserID ="+MainActivity.IDCurrent+"");
-        listNotee.clear();
-        while (dataNote.moveToNext()){
-            int id=dataNote.getInt(0);
-            String name = dataNote.getString(1);
-            int cid = dataNote.getInt(2);
-            int pid = dataNote.getInt(3);
-            int sid = dataNote.getInt(4);
-           String category = getNameFromId(cid,"Category");
-           String priority = getNameFromId(pid,"Priority");
-           String status = getNameFromId(sid,"Status");
-            String plandate = dataNote.getString(5);
-            String create = dataNote.getString(6);
-           listNotee.add(new Note(id,name,category,priority,status,plandate,create));
-
-           noteListViewAdapter.notifyDataSetChanged();
-//            database =dataStatus.getString(1);
-//            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void getDataCategory(){
+//        Cursor dataCategory=database.GetData("SELECT * FROM Category where UserID ="+MainActivity.IDCurrent+"");
+//        listCategory.clear();
+//        while (dataCategory.moveToNext()){
+//            String name = dataCategory.getString(1);
+//            String created = dataCategory.getString(2);
+//            int id=dataCategory.getInt(0);
+//            listCategory.add(new Category(id,name,created));
+//            cateListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//    private void getDataStatus(){
+//        Cursor dataStatus=database.GetData("SELECT * FROM Status where UserID ="+MainActivity.IDCurrent+"");
+//        listStatus.clear();
+//        while (dataStatus.moveToNext()){
+//            String name = dataStatus.getString(1);
+//            String created = dataStatus.getString(2);
+//            int id=dataStatus.getInt(0);
+//            listStatus.add(new Status(id,name,created));
+//            statusListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//    private void getDataPriority(){
+//        Cursor dataPriority=database.GetData("SELECT * FROM Priority where UserID ="+MainActivity.IDCurrent+"");
+//        listPriority.clear();
+//        while (dataPriority.moveToNext()){
+//            String name = dataPriority.getString(1);
+//            String created = dataPriority.getString(2);
+//            int id=dataPriority.getInt(0);
+//            listPriority.add(new Priority(id,name,created));
+//            prioListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//    private void getDataNote(){
+//        Cursor dataNote=database.GetData("SELECT * FROM Notes where UserID ="+MainActivity.IDCurrent+"");
+//        listNotee.clear();
+//        while (dataNote.moveToNext()){
+//            int id=dataNote.getInt(0);
+//            String name = dataNote.getString(1);
+//            int cid = dataNote.getInt(2);
+//            int pid = dataNote.getInt(3);
+//            int sid = dataNote.getInt(4);
+//           String category = getNameFromId(cid,"Category");
+//           String priority = getNameFromId(pid,"Priority");
+//           String status = getNameFromId(sid,"Status");
+//            String plandate = dataNote.getString(5);
+//            String create = dataNote.getString(6);
+//           listNotee.add(new Note(id,name,category,priority,status,plandate,create));
+//
+//           noteListViewAdapter.notifyDataSetChanged();
+////            database =dataStatus.getString(1);
+////            Toast.makeText(this,ten,Toast.LENGTH_SHORT).show();
+//        }
+  //  }
 
     @Override
     public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, @Nullable ContextMenu.ContextMenuInfo menuInfo) {
@@ -475,20 +461,20 @@ public class NoteFragment extends Fragment {
         }
         return super.onContextItemSelected(item);
     }
-    private String getNameFromId( int id, String nametable)
-    {
-        String query = "SELECT * FROM " + nametable+" WHERE Id= "+id+";";
-        SQLiteDatabase db = database.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        String name="";
-        while (cursor.moveToNext()) {
-            name = cursor.getString(1);
-            break;
-        }
-        cursor.close();
-        db.close();
-        return name;
-    }
+//    private String getNameFromId( int id, String nametable)
+//    {
+//        String query = "SELECT * FROM " + nametable+" WHERE Id= "+id+";";
+//        SQLiteDatabase db = database.getWritableDatabase();
+//        Cursor cursor = db.rawQuery(query, null);
+//        String name="";
+//        while (cursor.moveToNext()) {
+//            name = cursor.getString(1);
+//            break;
+//        }
+//        cursor.close();
+//        db.close();
+//        return name;
+//    }
 
 }
 

@@ -1,10 +1,12 @@
-package com.example.appnote.ui.Database;
+package com.example.appnote.ui.Database.Dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.example.appnote.ui.Database.Entity.Status;
 
 import java.util.List;
 

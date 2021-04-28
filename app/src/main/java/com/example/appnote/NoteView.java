@@ -1,6 +1,6 @@
 package com.example.appnote;
 
-public class Note {
+public class NoteView {
     public int id;
     public String name;
     public String category;
@@ -8,7 +8,7 @@ public class Note {
     public String status;
     public String planDate;
     public String Createdday;
-    public Note(int id,String name,String category,String priority,String status, String planDate, String createdday){
+    public NoteView(int id, String name, String category, String priority, String status, String planDate, String createdday){
         this.id=id;
         this.name=name;
         this.category=category;

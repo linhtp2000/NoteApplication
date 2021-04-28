@@ -1,24 +1,33 @@
-package com.example.appnote.ui.Database;
+package com.example.appnote.ui.Database.Entity;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import static androidx.room.ForeignKey.CASCADE;
+import static androidx.room.ForeignKey.SET_NULL;
 
-@Entity
+
+@Entity(foreignKeys = @ForeignKey(entity = User.class,
+        parentColumns = "Id",
+        childColumns = "UserId",
+        onDelete = CASCADE,onUpdate = SET_NULL))
 public class Category {
     @PrimaryKey(autoGenerate = true)
     private int Id;
     private String Name;
     private String Date;
    public int  UserId;
-    @ForeignKey(
-            entity = User.class,
-            parentColumns ="Id",
-            childColumns = "UserId"
-    )
+
+    public Category(){}
   public Category(int id, String name, String date, int idUser) {
         Id = id;
+        Name = name;
+        Date = date;
+        UserId = idUser;
+    }
+    public Category(String name, String date, int idUser) {
+
         Name = name;
         Date = date;
         UserId = idUser;
@@ -47,5 +56,6 @@ public class Category {
     public String getDate() {
         return Date;
     }
+
 
 }

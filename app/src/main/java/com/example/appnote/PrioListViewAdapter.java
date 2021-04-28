@@ -8,8 +8,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class PrioListViewAdapter extends BaseAdapter {
-    final ArrayList<Priority> listPriority;
-    public PrioListViewAdapter(ArrayList<Priority> listPriority) {
+    final ArrayList<PriorityView> listPriority;
+    public PrioListViewAdapter(ArrayList<PriorityView> listPriority) {
         this.listPriority = listPriority;
     }
 
@@ -35,7 +35,7 @@ public class PrioListViewAdapter extends BaseAdapter {
             viewCate = View.inflate(parent.getContext(), R.layout.status_view,null);
         }else viewCate=convertView;
         //bind dữ liệu
-        Priority priority =(Priority) getItem(position);
+        PriorityView priority =(PriorityView) getItem(position);
         ((TextView) viewCate.findViewById(R.id.statusname)).setText(String.format("Name: %s",priority.name));
         ((TextView) viewCate.findViewById(R.id.statuscreate)).setText(String.format("Created: %s",priority.Createdday));
 //            ((TextView) viewStatus.findViewById(R.id.tv_email)).setText(String.format("Mail: %s",user.email));

@@ -8,10 +8,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class NoteListViewAdapter extends BaseAdapter {
-    final ArrayList<Note> listNote;
-    Database database;
+    final ArrayList<NoteView> listNote;
+   // NoteDatabase database;
 
-    public NoteListViewAdapter(ArrayList<Note> listNote){
+    public NoteListViewAdapter(ArrayList<NoteView> listNote){
         this.listNote=listNote;
     }
     @Override
@@ -32,13 +32,13 @@ public class NoteListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        database= database=new Database(parent.getContext(),"note.sqlite",null,1);
+       // database= database=new NoteDatabase(parent.getContext(),"note.sqlite",null,1);
         View viewNote;
         if(convertView == null){
             viewNote = View.inflate(parent.getContext(), R.layout.note_view,null);
         }else viewNote=convertView;
         //bind dữ liệu
-        Note note =(Note) getItem(position);
+        NoteView note =(NoteView) getItem(position);
         ((TextView) viewNote.findViewById(R.id.notename)).setText(String.format("Name: %s",note.name));
         ((TextView) viewNote.findViewById(R.id.notecategory)).setText(String.format("Category: %s",note.category));
         ((TextView) viewNote.findViewById(R.id.notepriority)).setText(String.format("Priority: %s",note.priority));

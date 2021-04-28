@@ -11,12 +11,13 @@ import androidx.navigation.ui.NavigationUI;
 import android.os.Bundle;
 import android.view.Menu;
 
+import com.example.appnote.ui.Database.NoteDatabase;
 import com.google.android.material.navigation.NavigationView;
 
 public class ContentMainNav extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    Database db;
+    NoteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +27,7 @@ public class ContentMainNav extends AppCompatActivity {
         setSupportActionBar(toolbar);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        db = new Database(this);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_status, R.id.nav_note, R.id.nav_edit, R.id.nav_change)
                 .setDrawerLayout(drawer)
@@ -52,8 +51,5 @@ public class ContentMainNav extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-    public Database getMyData()
-    {
-        return(Database) db;
-    }
+
 }
