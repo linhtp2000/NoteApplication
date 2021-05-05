@@ -24,7 +24,7 @@
         android:inputType="textPersonName"
         android:hint="Name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/tvForm" />
 
     <Button
         android:id="@+id/btnAddStatus"
