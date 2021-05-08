@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appnote.NoteView;
 import com.example.appnote.R;
+import com.example.appnote.ui.Database.Entity.Category;
 import com.example.appnote.ui.note.NoteFragment;
 
 import java.util.List;
@@ -22,6 +23,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     Context context;
     NoteAdapter.onLongClickListener mOnLongClickListener;
 
+    public void setData (List<NoteView> mList) {
+        arrayListNote = mList;
+        notifyDataSetChanged();
+    }
     public void setOnLongClickListener(NoteAdapter.onLongClickListener onLongClickListener) {
         mOnLongClickListener = onLongClickListener;
     }

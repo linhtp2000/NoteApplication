@@ -36,19 +36,7 @@ public class HomeFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         ContentMainNav activity = (ContentMainNav) getActivity();
-       // database= activity.getMyData();
 
-    //    final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                getDataNote(1,"Note");
-//                textView.setText(statusofnotes[0]);
-//            }
-//
-//
-//            thongke[i]=temp;
-//        }
         getDataNote();
         getDataStatus();
       final AnyChartView anyChartView = root.findViewById(R.id.anyChartView);
@@ -74,12 +62,12 @@ public class HomeFragment extends Fragment {
         return root;
 
     }
-
+//Lấy các status của note
     private void getDataNote()
     {
-       // String result = "";
        statusofnotes= NoteDatabase.getInstance(getActivity()).getNoteDao().getStatusId(MainActivity.IDCurrent);
     }
+    //lấy tên các status
     private void getDataStatus()
     {
        status=NoteDatabase.getInstance(getActivity()).getStatusDao().getAll(MainActivity.IDCurrent);

@@ -233,9 +233,10 @@ public class NoteFragment extends Fragment {
                     {
                         Toast.makeText(getContext(), "Chưa thêm được nhé!", Toast.LENGTH_SHORT).show();
                     }
-                    dialog.cancel();
                     getDataNote();
-                    noteListViewAdapter.notifyDataSetChanged();
+                    noteListViewAdapter.setData(listNote);
+                    dialog.cancel();
+
                 }
             }
         });
@@ -369,14 +370,15 @@ public class NoteFragment extends Fragment {
                         Note note = new Note(listNote.get(notestt).id, StatusName, listCategory.get(cate).getId(), listPriority.get(prio).getId(),
                                 listStatus.get(stat).getId(),  listNote.get(notestt).createdday,tvnamePlan.getText().toString(), MainActivity.IDCurrent);
                         NoteDatabase.getInstance(getContext()).getNoteDao().update(note);
-                        getDataNote();
-                        noteListViewAdapter.notifyDataSetChanged();
-                        dialog.cancel();
                         Toast.makeText(getContext(), "Đã sửa xong nhé!", Toast.LENGTH_SHORT).show();
+                        getDataNote();
+                        noteListViewAdapter.setData(listNote);
+                        dialog.cancel();
+
                     } catch (Exception ex) {
                         Toast.makeText(getContext(), "Chưa sửa được nhé!", Toast.LENGTH_SHORT).show();
                         getDataNote();
-                        noteListViewAdapter.notifyDataSetChanged();
+                        noteListViewAdapter.setData(listNote);
                         dialog.cancel();
                     }
                 }
@@ -415,7 +417,7 @@ public class NoteFragment extends Fragment {
                     Toast.makeText(getContext(), "Chưa xóa được nhé!", Toast.LENGTH_SHORT).show();
                 }
                 getDataNote();
-                noteListViewAdapter.notifyDataSetChanged();
+                noteListViewAdapter.setData(listNote);
                 dialog.cancel();
             }
         });

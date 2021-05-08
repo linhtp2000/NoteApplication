@@ -99,7 +99,7 @@ public class GalleryFragment extends Fragment {
                     Toast.makeText(getContext(), "Tên không được để trống!", Toast.LENGTH_SHORT).show();
                 } else {
                     if (c != null) {
-                        Toast.makeText(getContext(), "Status đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Category đã tồn tại!", Toast.LENGTH_SHORT).show();
                     } else {
                         Boolean checkInsert = insertData(StatusName, date + "  " + gio + ":" + phut + ":" + giay, MainActivity.IDCurrent);
                         //   getDataCategory();
@@ -149,7 +149,7 @@ public class GalleryFragment extends Fragment {
                 else {
                     if(c!=null)
                     {
-                        Toast.makeText(getContext(), "Status đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Category đã tồn tại!", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         try {

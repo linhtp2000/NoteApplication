@@ -97,7 +97,7 @@ public class SlideshowFragment extends Fragment {
                 }
                 else {
                     if (p != null) {
-                        Toast.makeText(getContext(), "Status đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Priority đã tồn tại!", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Boolean checkInsert = insertData(StatusName, date + "  " + gio + ":" + phut + ":" + giay, MainActivity.IDCurrent);
@@ -144,7 +144,7 @@ public class SlideshowFragment extends Fragment {
                 }
                 else {
                     if (p != null) {
-                        Toast.makeText(getContext(), "Status đã tồn tại!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Priority đã tồn tại!", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         try {
